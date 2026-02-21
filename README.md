@@ -50,8 +50,10 @@ from pl_mocks_and_fakes import stub, mock_for
 from your_package.your_module import random_int, random_int_and_string, random_string
 
 def test_random_int_and_string() -> None:
-    stub(random_int)(5) # Use `stub` to set the return value of a mock for a specific test.
-    mock_for(random_string).return_value = "foo" # Use `mock_for` to get the Mock object.
+    # Use `stub` to set the return value of a mock for a specific test.
+    stub(random_int)(5)
+    # Use `mock_for` to get the Mock object.
+    mock_for(random_string).return_value = "foo"
 
     result = random_int_and_string()
 
@@ -133,7 +135,8 @@ from your_package.your_module import duplicate_jira_ticket, create_jira_ticket, 
 from your_test_package.jira_fake import JiraFake
 
 def test_duplicate_jira_ticket() -> None:
-    # Use functions with Fake implementations as if they were the real functions. The Fake will be used instead.
+    # Use functions with Fake implementations as if they were the real functions.
+    # The Fake will be used instead.
     ticket_id = create_jira_ticket("Ticket Name")
 
     duplicated_ticket_id = duplicate_jira_ticket(ticket_id)
