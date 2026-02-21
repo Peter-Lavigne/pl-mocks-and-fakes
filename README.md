@@ -94,7 +94,7 @@ class JiraFake(Fake):
 # Test code in your_test_package/your_module_test.py
 
 from pl_mocks_and_fakes import stub, mock_for, fake_for
-from your_package.your_module import random_int, random_int_and_string, random_string, duplicate_jira_ticket, JiraTicket
+from your_package.your_module import random_int, random_int_and_string, random_string, duplicate_jira_ticket, JiraTicket, create_jira_ticket, fetch_jira_ticket
 from your_test_package.jira_fake import JiraFake
 
 def test_random_int_and_string() -> None:
@@ -106,12 +106,15 @@ def test_random_int_and_string() -> None:
     assert result == (5, "foo")
 
 def test_duplicate_jira_ticket() -> None:
-    fake_for(JiraFake).tickets = [JiraTicket(id="ID-1", title="Ticket Name")] # Use `fake_for` to get the Fake object.
+    # Use mocked functions as if they were the real functions. The Fake will be used instead.
+    ticket_id = create_jira_ticket("Ticket Name")
 
-    duplicate_jira_ticket("ID-1")
+    duplicated_ticket_id = duplicate_jira_ticket(ticket_id)
 
+    assert ticket_id != duplicated_ticket_id
+    assert fetch_jira_ticket(duplicated_ticket_id).title == "Ticket Name"
+    # Use `fake_for` to get the Fake object.
     assert len(fake_for(JiraFake).tickets) == 2
-    assert all(ticket.title == "Ticket Name" for ticket in fake_for(JiraFake).tickets)
 ```
 
 ## Releasing
