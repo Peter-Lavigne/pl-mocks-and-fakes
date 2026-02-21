@@ -48,7 +48,7 @@ def duplicate_jira_ticket(ticket_id: str) -> str:
     return create_jira_ticket(title=ticket.title)
 
 
-# Conftest.py in your_test_package/conftest.py
+# conftest.py in your_test_package/conftest.py
 
 from pl_mocks_and_fakes import initialize_mocks, create_fakes
 import your_package
@@ -95,7 +95,9 @@ def test_random_int_and_string() -> None:
     stub(random_int)(5) # Use `stub` to set the return value of a mock for a specific test.
     mock_for(random_string).return_value = "foo" # Use `mock_for` to get the Mock object.
 
-    assert random_int_and_string() == (5, "foo")
+    result = random_int_and_string()
+
+    assert result == (5, "foo")
 
 def test_duplicate_jira_ticket() -> None:
     fake_for(JiraFake).tickets = [FakeJiraTicket(id="ID-1", title="Real Ticket")] # Use `fake_for` to get the Fake object.
