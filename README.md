@@ -1,0 +1,115 @@
+# pl-mocks-and-fakes
+
+Mock slow, nondeterministic, and side-effect-producing code with minimal per-test configuration.
+
+## Project Status
+
+Alpha. Expect breaking changes.
+
+## Installation
+
+```
+uv add pl-mocks-and-fakes
+```
+
+## Usage
+
+```python
+from pl_mocks_and_fakes import Fake, MockInUnitTests, MockReason
+import random
+
+# Production code in your_package/your_module.py
+
+@MockInUnitTests(MockReason.NONDETERMINISTIC)
+def random_int() -> int:
+    return random.randint(0, 100)
+
+@MockInUnitTests(MockReason.NONDETERMINISTIC)
+def random_string() -> str:
+    return random.choice(["foo", "bar", "baz"])
+
+def random_int_and_string() -> tuple[int, str]:
+    return random_int(), random_string()
+
+@MockInUnitTests(*THIRD_PARTY_API_MOCK_REASONS)
+def create_jira_ticket(title: str):
+    # This makes a third-party API call.
+    # ...
+    pass
+
+@MockInUnitTests(*THIRD_PARTY_API_MOCK_REASONS)
+def fetch_jira_ticket(ticket_id: str):
+    # This makes a third-party API call.
+    # ...
+    pass
+
+def duplicate_jira_ticket(ticket_id: str) -> str:
+    ticket = fetch_jira_ticket(ticket_id)
+    return create_jira_ticket(title=ticket.title)
+
+
+# Conftest.py in your_test_package/conftest.py
+
+from pl_mocks_and_fakes import initialize_mocks, create_fakes
+import your_package
+
+def pytest_runtest_setup(item: pytest.Item) -> None:
+    if not any(marker.name == "integration" for marker in item.iter_markers()):
+        initialize_mocks(your_package)
+        create_fakes(your_package)
+
+# Fake code in your_test_package/jira_fake.py
+
+from pl_mocks_and_fakes import Fake, mock_for
+from your_package.your_module import create_jira_ticket, fetch_jira_ticket
+
+class FakeJiraTicket:
+    def __init__(self, id: str, title: str):
+        self.id = id
+        self.title = title
+
+class JiraFake(Fake):
+    def __init__(self):
+        def _create_jira_ticket_side_effect(title: str) -> str:
+            ticket_id = f"FAKE-{len(self.tickets) + 1}"
+            self.tickets.append(FakeJiraTicket(id=ticket_id, title=title))
+            return ticket_id
+
+        def _fetch_jira_ticket_side_effect(ticket_id: str) -> FakeJiraTicket:
+            for ticket in self.tickets:
+                if ticket.id == ticket_id:
+                    return ticket
+            raise ValueError(f"Ticket with id {ticket_id} not found")
+
+        self.tickets: list[FakeJiraTicket] = []
+        mock_for(create_jira_ticket).side_effect = _create_jira_ticket_side_effect
+        mock_for(fetch_jira_ticket).side_effect = _fetch_jira_ticket_side_effect
+
+# Test code in your_test_package/your_module_test.py
+
+from pl_mocks_and_fakes import stub, mock_for, fake_for
+from your_package.your_module import random_int_and_string, duplicate_jira_ticket
+from your_test_package.jira_fake import JiraFake, FakeJiraTicket
+
+def test_random_int_and_string() -> None:
+    stub(random_int)(5) # Use `stub` to set the return value of a mock for a specific test.
+    mock_for(random_string).return_value = "foo" # Use `mock_for` to get the Mock object.
+
+    assert random_int_and_string() == (5, "foo")
+
+def test_duplicate_jira_ticket() -> None:
+    fake_for(JiraFake).tickets = [FakeJiraTicket(id="ID-1", title="Real Ticket")] # Use `fake_for` to get the Fake object.
+
+    duplicate_jira_ticket("ID-1")
+
+    assert len(fake_for(JiraFake).tickets) == 2
+    assert fake_for(JiraFake).tickets[-1].title == "Real Ticket"
+```
+
+## Releasing
+
+Run `./release.sh`.
+
+## License
+
+Licensed under the Apache License 2.0. See [LICENSE](./LICENSE).
