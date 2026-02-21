@@ -73,8 +73,6 @@ def _modules_to_patch(
         for module_info in pkgutil.iter_modules([package_path])
     ]
     for m in all_modules:
-        if m.endswith(("_test", "_fake")):
-            continue  # Skip test and fake modules
         module = importlib.import_module(m)
         module_attributes = dir(module)
         result[module] = [
