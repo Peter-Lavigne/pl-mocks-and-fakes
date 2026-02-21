@@ -12,12 +12,10 @@ Alpha. Expect breaking changes.
 uv add pl-mocks-and-fakes
 ```
 
-## Usage
+## Usage (Mocks)
 
 ```python
-from dataclasses import dataclass
-
-from pl_mocks_and_fakes import Fake, MockInUnitTests, MockReason, THIRD_PARTY_API_MOCK_REASONS
+from pl_mocks_and_fakes import MockInUnitTests, MockReason
 import random
 
 # Production code in your_package/your_module.py
@@ -33,6 +31,38 @@ def random_string() -> str:
 def random_int_and_string() -> tuple[int, str]:
     return random_int(), random_string()
 
+
+# conftest.py in your_test_package/conftest.py
+
+import pytest
+from pl_mocks_and_fakes import initialize_mocks
+import your_package
+
+def pytest_runtest_setup(item: pytest.Item) -> None:
+    initialize_mocks(your_package)
+
+# Test code in your_test_package/your_module_test.py
+
+from pl_mocks_and_fakes import stub, mock_for
+from your_package.your_module import random_int, random_int_and_string, random_string
+
+def test_random_int_and_string() -> None:
+    stub(random_int)(5) # Use `stub` to set the return value of a mock for a specific test.
+    mock_for(random_string).return_value = "foo" # Use `mock_for` to get the Mock object.
+
+    result = random_int_and_string()
+
+    assert result == (5, "foo")
+```
+
+## Usage (Fakes)
+
+```python
+from dataclasses import dataclass
+
+from pl_mocks_and_fakes import Fake, MockInUnitTests, THIRD_PARTY_API_MOCK_REASONS
+
+# Production code in your_package/your_module.py
 
 @dataclass
 class JiraTicket:
@@ -60,14 +90,11 @@ def duplicate_jira_ticket(ticket_id: str) -> str:
 # conftest.py in your_test_package/conftest.py
 
 import pytest
-from pl_mocks_and_fakes import initialize_mocks, create_fakes
-import your_package
+from pl_mocks_and_fakes import create_fakes
 import your_test_package
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
-    if not any(marker.name == "integration" for marker in item.iter_markers()):
-        initialize_mocks(your_package)
-        create_fakes(your_test_package)
+    create_fakes(your_test_package)
 
 # Fake code in your_test_package/jira_fake.py
 
@@ -93,17 +120,9 @@ class JiraFake(Fake):
 
 # Test code in your_test_package/your_module_test.py
 
-from pl_mocks_and_fakes import stub, mock_for, fake_for
-from your_package.your_module import random_int, random_int_and_string, random_string, duplicate_jira_ticket, JiraTicket, create_jira_ticket, fetch_jira_ticket
+from pl_mocks_and_fakes import fake_for
+from your_package.your_module import duplicate_jira_ticket, create_jira_ticket, fetch_jira_ticket
 from your_test_package.jira_fake import JiraFake
-
-def test_random_int_and_string() -> None:
-    stub(random_int)(5) # Use `stub` to set the return value of a mock for a specific test.
-    mock_for(random_string).return_value = "foo" # Use `mock_for` to get the Mock object.
-
-    result = random_int_and_string()
-
-    assert result == (5, "foo")
 
 def test_duplicate_jira_ticket() -> None:
     # Use functions with Fake implementations as if they were the real functions. The Fake will be used instead.
