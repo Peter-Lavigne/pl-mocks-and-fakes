@@ -106,7 +106,7 @@ def test_random_int_and_string() -> None:
     assert result == (5, "foo")
 
 def test_duplicate_jira_ticket() -> None:
-    # Use mocked functions as if they were the real functions. The Fake will be used instead.
+    # Use functions with Fake implementations as if they were the real functions. The Fake will be used instead.
     ticket_id = create_jira_ticket("Ticket Name")
 
     duplicated_ticket_id = duplicate_jira_ticket(ticket_id)
