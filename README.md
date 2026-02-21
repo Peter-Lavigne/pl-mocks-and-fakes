@@ -87,12 +87,6 @@ def fetch_jira_ticket(ticket_id: str) -> JiraTicket:
     # ...
     pass
 
-
-
-# your_package/your_module.py
-
-from your_package.jira_api_client import create_jira_ticket, fetch_jira_ticket
-
 def duplicate_jira_ticket(ticket_id: str) -> str:
     ticket = fetch_jira_ticket(ticket_id)
     return create_jira_ticket(ticket.title)
@@ -115,7 +109,7 @@ def pytest_runtest_setup(item: pytest.Item) -> None:
 # your_test_package/jira_fake.py
 
 from pl_mocks_and_fakes import Fake, mock_for
-from your_package.your_module import JiraTicket, create_jira_ticket, fetch_jira_ticket
+from your_package.jira_api_client import JiraTicket, create_jira_ticket, fetch_jira_ticket
 
 class JiraFake(Fake):
     def __init__(self):
@@ -134,24 +128,28 @@ class JiraFake(Fake):
         mock_for(create_jira_ticket).side_effect = _create_jira_ticket_side_effect
         mock_for(fetch_jira_ticket).side_effect = _fetch_jira_ticket_side_effect
 
+    def create_jira_ticket(self, title: str) -> str:
+        return mock_for(create_jira_ticket).side_effect(title)
+
+    def fetch_jira_ticket(self, ticket_id: str) -> JiraTicket:
+        return mock_for(fetch_jira_ticket).side_effect(ticket_id)
+
 
 
 # your_test_package/your_module_test.py
 
 from pl_mocks_and_fakes import fake_for
-from your_package.your_module import duplicate_jira_ticket, create_jira_ticket, fetch_jira_ticket
+from your_package.jira_api_client import duplicate_jira_ticket
 from your_test_package.jira_fake import JiraFake
 
 def test_duplicate_jira_ticket() -> None:
-    # Use functions with Fake implementations as if they were the real functions.
-    # The Fake will be used instead.
-    ticket_id = create_jira_ticket("Ticket Name")
+    # Use `fake_for` to get the Fake object.
+    ticket_id = fake_for(JiraFake).create_jira_ticket("Ticket Name")
 
     duplicated_ticket_id = duplicate_jira_ticket(ticket_id)
 
     assert ticket_id != duplicated_ticket_id
-    assert fetch_jira_ticket(duplicated_ticket_id).title == "Ticket Name"
-    # Use `fake_for` to get the Fake object.
+    assert fake_for(JiraFake).fetch_jira_ticket(duplicated_ticket_id).title == "Ticket Name"
     assert len(fake_for(JiraFake).tickets) == 2
 ```
 
