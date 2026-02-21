@@ -15,10 +15,10 @@ uv add pl-mocks-and-fakes
 ## Usage (Mocks)
 
 ```python
+# Production code in your_package/your_module.py
+
 from pl_mocks_and_fakes import MockInUnitTests, MockReason
 import random
-
-# Production code in your_package/your_module.py
 
 @MockInUnitTests(MockReason.NONDETERMINISTIC)
 def random_int() -> int:
@@ -32,6 +32,7 @@ def random_int_and_string() -> tuple[int, str]:
     return random_int(), random_string()
 
 
+
 # conftest.py in your_test_package/conftest.py
 
 import pytest
@@ -40,6 +41,8 @@ import your_package
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
     initialize_mocks(your_package)
+
+
 
 # Test code in your_test_package/your_module_test.py
 
@@ -58,11 +61,11 @@ def test_random_int_and_string() -> None:
 ## Usage (Fakes)
 
 ```python
+# Production code in your_package/your_module.py
+
 from dataclasses import dataclass
 
 from pl_mocks_and_fakes import Fake, MockInUnitTests, THIRD_PARTY_API_MOCK_REASONS
-
-# Production code in your_package/your_module.py
 
 @dataclass
 class JiraTicket:
@@ -87,6 +90,7 @@ def duplicate_jira_ticket(ticket_id: str) -> str:
     return create_jira_ticket(title=ticket.title)
 
 
+
 # conftest.py in your_test_package/conftest.py
 
 import pytest
@@ -95,6 +99,8 @@ import your_test_package
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
     create_fakes(your_test_package)
+
+
 
 # Fake code in your_test_package/jira_fake.py
 
@@ -117,6 +123,8 @@ class JiraFake(Fake):
         self.tickets: list[JiraTicket] = []
         mock_for(create_jira_ticket).side_effect = _create_jira_ticket_side_effect
         mock_for(fetch_jira_ticket).side_effect = _fetch_jira_ticket_side_effect
+
+
 
 # Test code in your_test_package/your_module_test.py
 
