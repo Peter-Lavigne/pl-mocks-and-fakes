@@ -63,7 +63,7 @@ def test_random_int_and_string() -> None:
 ## Usage (Fakes)
 
 ```python
-# your_package/your_module.py
+# your_package/jira_api_client.py
 
 from dataclasses import dataclass
 
@@ -87,19 +87,27 @@ def fetch_jira_ticket(ticket_id: str) -> JiraTicket:
     # ...
     pass
 
+
+
+# your_package/your_module.py
+
+from your_package.jira_api_client import create_jira_ticket, fetch_jira_ticket
+
 def duplicate_jira_ticket(ticket_id: str) -> str:
     ticket = fetch_jira_ticket(ticket_id)
-    return create_jira_ticket(title=ticket.title)
+    return create_jira_ticket(ticket.title)
 
 
 
 # your_test_package/conftest.py
 
 import pytest
-from pl_mocks_and_fakes import create_fakes
+from pl_mocks_and_fakes import create_fakes, initialize_mocks
 import your_test_package
+import your_package
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
+    initialize_mocks(your_package)
     create_fakes(your_test_package)
 
 
