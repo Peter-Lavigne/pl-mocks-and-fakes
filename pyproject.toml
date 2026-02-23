@@ -1,6 +1,6 @@
 [project]
 name = "pl-mocks-and-fakes"
-version = "0.0.15"
+version = "0.0.16"
 description = "Mock slow, nondeterministic, and side-effect-producing code with minimal per-test configuration."
 readme = "README.md"
 authors = [{ name = "Peter Lavigne" }]
