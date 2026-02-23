@@ -74,7 +74,8 @@ def _modules_to_patch(
     ]
     for m in all_modules:
         if m.endswith(("_test", "_fake")):
-            continue  # Skip test and fake modules
+            # Skip test and fake modules
+            continue  # pragma: no cover
         module = importlib.import_module(m)
         module_attributes = dir(module)
         result[module] = [
