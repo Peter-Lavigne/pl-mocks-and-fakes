@@ -73,9 +73,6 @@ def _modules_to_patch(
         for module_info in pkgutil.iter_modules([package_path])
     ]
     for m in all_modules:
-        if m.endswith(("_test", "_fake")):
-            # Skip test and fake modules
-            continue  # pragma: no cover
         module = importlib.import_module(m)
         module_attributes = dir(module)
         result[module] = [
@@ -129,6 +126,8 @@ def initialize_mocks(package: ModuleType) -> None:
 
 
 def mock_for(component: Callable[..., Any]) -> Mock:
+    if isinstance(component, Mock):
+        return component
     assert component in _mocks, f"No mock found for component: {component}"
     return _mocks[component]
 
