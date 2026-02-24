@@ -1,11 +1,11 @@
 import importlib
 import pkgutil
+import sys
 from collections.abc import Callable
 from enum import Enum
-from functools import cache
 from types import FunctionType, ModuleType
-from typing import Any, ParamSpec, TypeVar, cast
-from unittest.mock import Mock, patch
+from typing import Any, ParamSpec, TypeVar
+from unittest.mock import Mock
 
 from pl_mocks_and_fakes.default_mock_return_value import default_mock_return_value
 
@@ -36,76 +36,21 @@ THIRD_PARTY_API_MOCK_REASONS = {
 P = ParamSpec("P")
 R = TypeVar("R")
 
-# Registry of (module_name, func_name) for callables that should be mocked in unit tests.
-_MOCKABLE_REGISTRY: set[tuple[str, str]] = set()
 
+def MockInUnitTests(*_: MockReason) -> Callable[[Callable[P, R]], Callable[P, R]]:  # noqa: N802
+    # MockReason is set solely for documentation purposes
 
-class MockInUnitTests:
-    def __init__(self, *_: MockReason) -> None:
-        # MockReason is set strictly for documentation purposes.
-        pass
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        if "pytest" not in sys.modules:
+            # Return the original function unchanged in production
+            return func  # pragma: no cover
 
-    def __call__(self, func: Callable[P, R]) -> Callable[P, R]:
-        _MOCKABLE_REGISTRY.add((func.__module__, func.__name__))
-        return func
+        if func not in _mocks:
+            _mocks[func] = Mock()
+            _mocks[func].return_value = default_mock_return_value(func)
+        return _mocks[func]
 
-
-@cache
-def _functions_to_mock(package_path: str, package_name: str) -> list[FunctionType]:
-    result: list[FunctionType] = []
-    for module_info in pkgutil.iter_modules([package_path]):
-        # Import all modules in src to populate the registry of functions to mock.
-        module = importlib.import_module(f"{package_name}.{module_info.name}")
-    for module_name, func_name in _MOCKABLE_REGISTRY:
-        # Import all modules (including those not in the package) that contain functions to mock, so that we can retrieve the function objects to create mocks for them.
-        module = importlib.import_module(module_name)
-        func = getattr(module, func_name)
-        result.append(cast("FunctionType", func))
-    return result
-
-
-def _modules_to_patch(
-    package_path: str, package_name: str
-) -> dict[ModuleType, list[FunctionType]]:
-    result: dict[ModuleType, list[FunctionType]] = {}
-    all_modules = [
-        f"{package_name}.{module_info.name}"
-        for module_info in pkgutil.iter_modules([package_path])
-    ]
-    for m in all_modules:
-        module = importlib.import_module(m)
-        module_attributes = dir(module)
-        result[module] = [
-            f
-            for f in _functions_to_mock(package_path, package_name)
-            if f.__name__ in module_attributes
-        ]
-    return result
-
-
-def _set_up_mocks(package_path: str, package_name: str) -> None:
-    for component_function in _functions_to_mock(package_path, package_name):
-        mock = Mock()
-        mock.return_value = default_mock_return_value(component_function)
-        _mocks[component_function] = mock
-    for (
-        module_to_patch,
-        functions_to_mock,
-    ) in _modules_to_patch(package_path, package_name).items():
-        for f in functions_to_mock:
-            patch(
-                f"{module_to_patch.__name__}.{f.__name__}",
-                new=_mocks[f],
-            ).start()
-
-
-def _reset_mocks(package_path: str, package_name: str) -> None:
-    # Reusing mocks instead of creating new ones sped up tests by about 15%.
-    for component_function in _functions_to_mock(package_path, package_name):
-        _mocks[component_function].reset_mock(return_value=True, side_effect=True)
-        _mocks[component_function].return_value = default_mock_return_value(
-            component_function
-        )
+    return decorator
 
 
 # Global variable holding all mocks
@@ -113,27 +58,28 @@ _mocks: dict[FunctionType, Mock] = {}
 _mocks_initialized = False
 
 
-def initialize_mocks(*packages: ModuleType) -> None:
+def initialize_mocks(package: ModuleType) -> None:
     global _mocks_initialized  # noqa: PLW0603
 
-    for package in packages:
-        assert len(package.__path__) == 1, "Expected package to have exactly one path"
-        package_path = package.__path__[0]
-        package_name = package.__name__
+    # assert len(package.__path__) == 1, "Expected package to have exactly one path"
+    package_path = package.__path__[0]
+    package_name = package.__name__
 
-        if not _mocks_initialized:
-            _set_up_mocks(package_path, package_name)
-        else:
-            _reset_mocks(package_path, package_name)
-
-    _mocks_initialized = True
+    if not _mocks_initialized:
+        for module_info in pkgutil.iter_modules([package_path]):
+            # Import all modules in src to populate the registry of functions to mock.
+            importlib.import_module(f"{package_name}.{module_info.name}")
+        _mocks_initialized = True
+    else:
+        for func, mock in _mocks.items():
+            mock.reset_mock(return_value=True, side_effect=True)
+            # Reset return value to default for each mock
+            mock.return_value = default_mock_return_value(func)
 
 
 def mock_for(component: Callable[..., Any]) -> Mock:
-    if isinstance(component, Mock):
-        return component
-    assert component in _mocks, f"No mock found for component: {component}"
-    return _mocks[component]
+    assert isinstance(component, Mock)
+    return component
 
 
 def stub[T](component: Callable[..., T]) -> Callable[[T], None]:

@@ -1,8 +1,9 @@
-from pl_mocks_and_fakes.fakes import Fake
+from pl_mocks_and_fakes.fakes import Fake, fake
 from pl_mocks_and_fakes.mocks import mock_for
 from tests.test_files.api import Item, create_item, fetch_item
 
 
+@fake()
 class ApiFake(Fake):
     def __init__(self) -> None:
         def _create_item_side_effect(_name: str) -> Item:
