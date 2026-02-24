@@ -113,16 +113,20 @@ _mocks: dict[FunctionType, Mock] = {}
 _mocks_initialized = False
 
 
-def initialize_mocks(package: ModuleType) -> None:
+def initialize_mocks(*packages: ModuleType) -> None:
     global _mocks_initialized  # noqa: PLW0603
-    assert len(package.__path__) == 1, "Expected package to have exactly one path"
-    package_path = package.__path__[0]
-    package_name = package.__name__
-    if not _mocks_initialized:
-        _set_up_mocks(package_path, package_name)
-        _mocks_initialized = True
-    else:
-        _reset_mocks(package_path, package_name)
+
+    for package in packages:
+        assert len(package.__path__) == 1, "Expected package to have exactly one path"
+        package_path = package.__path__[0]
+        package_name = package.__name__
+
+        if not _mocks_initialized:
+            _set_up_mocks(package_path, package_name)
+        else:
+            _reset_mocks(package_path, package_name)
+
+    _mocks_initialized = True
 
 
 def mock_for(component: Callable[..., Any]) -> Mock:
