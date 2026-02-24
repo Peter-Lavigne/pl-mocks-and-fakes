@@ -133,7 +133,7 @@ wheels = [
 
 [[package]]
 name = "pl-mocks-and-fakes"
-version = "0.0.21"
+version = "0.0.22"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
@@ -148,7 +148,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pydantic", specifier = ">=2.12.5" }]
+requires-dist = [{ name = "pydantic" }]
 
 [package.metadata.requires-dev]
 dev = [

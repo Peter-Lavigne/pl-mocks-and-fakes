@@ -1,13 +1,11 @@
 [project]
 name = "pl-mocks-and-fakes"
-version = "0.0.21"
+version = "0.0.22"
 description = "Mock slow, nondeterministic, and side-effect-producing code with minimal per-test configuration."
 readme = "README.md"
 authors = [{ name = "Peter Lavigne" }]
 requires-python = ">=3.12"
-dependencies = [
-    "pydantic>=2.12.5",
-]
+dependencies = ["pydantic"]
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 classifiers = ["License :: OSI Approved :: Apache Software License"]
