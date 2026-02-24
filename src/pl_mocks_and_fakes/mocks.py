@@ -78,8 +78,12 @@ def initialize_mocks(package: ModuleType) -> None:
 
 
 def mock_for(component: Callable[..., Any]) -> Mock:
-    assert isinstance(component, Mock)
-    return component
+    if isinstance(component, Mock):
+        return component
+    assert component in _mocks, (
+        f"No mock found for component: {component}"
+    )  # pragma: no cover
+    return _mocks[component]  # pragma: no cover
 
 
 def stub[T](component: Callable[..., T]) -> Callable[[T], None]:
