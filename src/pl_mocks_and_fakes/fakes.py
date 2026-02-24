@@ -30,11 +30,12 @@ def fake_for[T: Fake](fake_type: type[T]) -> T:
     return cast("T", _fakes[fake_type])
 
 
-def create_fakes(package: ModuleType) -> None:
+def create_fakes(*packages: ModuleType) -> None:
     global _fakes  # noqa: PLW0603
-    assert len(package.__path__) == 1, "Expected package to have exactly one path"
-    package_path = package.__path__[0]
-    package_name = package.__name__
     _fakes = {}
-    for fake_class in _fake_classes(package_path, package_name):
-        _fakes[fake_class] = fake_class()
+    for package in packages:
+        assert len(package.__path__) == 1, "Expected package to have exactly one path"
+        package_path = package.__path__[0]
+        package_name = package.__name__
+        for fake_class in _fake_classes(package_path, package_name):
+            _fakes[fake_class] = fake_class()
