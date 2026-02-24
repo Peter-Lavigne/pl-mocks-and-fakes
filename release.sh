@@ -20,8 +20,8 @@ ruff check --fix
 echo 'Running "uv run pyright src"...'
 uv run pyright src
 
-echo 'Running "uv run pytest --cov --cov-fail-under=100"...'
-uv run pytest --cov --cov-fail-under=100
+echo 'Running "uv run pytest --cov --cov-fail-under=100 --cov-report=term-missing"...'
+uv run pytest --cov --cov-fail-under=100 --cov-report=term-missing
 
 echo 'Running "rm -f dist/*.whl dist/*.tar.gz"...'
 rm -f dist/*.whl dist/*.tar.gz

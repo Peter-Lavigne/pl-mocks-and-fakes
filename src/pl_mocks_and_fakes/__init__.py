@@ -1,4 +1,4 @@
-from pl_mocks_and_fakes.fakes import Fake, create_fakes, fake, fake_for
+from pl_mocks_and_fakes.fakes import Fake, create_fakes, fake_for
 from pl_mocks_and_fakes.mocks import (
     HUMAN_INTERACTION_MOCK_REASONS,
     THIRD_PARTY_API_MOCK_REASONS,
@@ -16,7 +16,6 @@ __all__ = [
     "MockInUnitTests",
     "MockReason",
     "create_fakes",
-    "fake",
     "fake_for",
     "initialize_mocks",
     "mock_for",
