@@ -37,10 +37,10 @@ def random_int_and_string() -> tuple[int, str]:
 
 import pytest
 from pl_mocks_and_fakes import initialize_mocks
-import your_package
+import your_test_package
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
-    initialize_mocks(your_package)
+    initialize_mocks(your_test_package)
 
 
 
@@ -98,10 +98,9 @@ def duplicate_jira_ticket(ticket_id: str) -> str:
 import pytest
 from pl_mocks_and_fakes import create_fakes, initialize_mocks
 import your_test_package
-import your_package
 
 def pytest_runtest_setup(item: pytest.Item) -> None:
-    initialize_mocks(your_package)
+    initialize_mocks(your_test_package)
     create_fakes(your_test_package)
 
 
