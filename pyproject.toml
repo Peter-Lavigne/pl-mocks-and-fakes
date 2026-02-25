@@ -1,6 +1,6 @@
 [project]
 name = "pl-mocks-and-fakes"
-version = "0.0.28"
+version = "0.0.29"
 description = "Mock slow, nondeterministic, and side-effect-producing code with minimal per-test configuration."
 readme = "README.md"
 authors = [{ name = "Peter Lavigne" }]
@@ -19,9 +19,7 @@ requires = ["uv_build>=0.10.4,<0.11.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
-dev = [
-    "pl-ci-cd==0.0.19",
-]
+dev = ["pyright==1.1.408", "pytest==9.0.2", "pytest-cov==7.0.0", "ruff==0.15.2"]
 
 [tool.ruff]
 extend = "copied/pyproject.toml"
@@ -30,6 +28,4 @@ extend = "copied/pyproject.toml"
 typeCheckingMode = "strict"
 
 [tool.coverage.run]
-omit = [
-    "tests/*",
-]
+omit = ["tests/*"]
