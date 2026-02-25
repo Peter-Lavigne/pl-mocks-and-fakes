@@ -175,21 +175,25 @@ wheels = [
 
 [[package]]
 name = "pl-ci-cd"
-version = "0.0.15"
+version = "0.0.19"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pl-run-program" },
     { name = "pl-user-io" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ee/d2/0ce527113f94c17f326058d2f1cb5174ffb90c637fd2318869785afe9a7a/pl_ci_cd-0.0.15.tar.gz", hash = "sha256:8f8c7f203530192da1468351be8ffef3a23fd7bf05934a88feadbf449daa4c2c", size = 7859, upload-time = "2026-02-24T21:44:17.177Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4b/78/dde2abc93f32255458d11dfbb98d73b158bb5fa3b8be5fad2d0a1cd88468/pl_ci_cd-0.0.19.tar.gz", hash = "sha256:4d0785192c19aa30cc87fc2f85a1b461df2d41d67d7642194a64a04629d26aa1", size = 7911, upload-time = "2026-02-25T01:08:57.39Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/69/bb/4f8480af2586dd0d501e1931471b83e015253107fa3af71ba663b426e423/pl_ci_cd-0.0.15-py3-none-any.whl", hash = "sha256:1d9428739176fd591fd09f211c645bbf0a96abeb6efa06b2d8817ad1848938c6", size = 11571, upload-time = "2026-02-24T21:44:16.1Z" },
+    { url = "https://files.pythonhosted.org/packages/51/e9/1fffc81e2f60391acd54838fce1dfe9f6aea62b48177f53e15a8911aaa2e/pl_ci_cd-0.0.19-py3-none-any.whl", hash = "sha256:86990b0bd780b329dda7de4127e1995892cdd9399be5a4f958f26416585eae4d", size = 11657, upload-time = "2026-02-25T01:08:56.415Z" },
 ]
 
 [[package]]
 name = "pl-mocks-and-fakes"
-version = "0.0.26"
+version = "0.0.27"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
@@ -198,23 +202,13 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pl-ci-cd" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [{ name = "pydantic" }]
 
 [package.metadata.requires-dev]
-dev = [
-    { name = "pl-ci-cd", specifier = "==0.0.15" },
-    { name = "pyright", specifier = ">=1.1.408" },
-    { name = "pytest", specifier = ">=9.0.2" },
-    { name = "pytest-cov", specifier = ">=7.0.0" },
-    { name = "ruff", specifier = ">=0.15.2" },
-]
+dev = [{ name = "pl-ci-cd", specifier = "==0.0.19" }]
 
 [[package]]
 name = "pl-run-program"
@@ -227,14 +221,14 @@ wheels = [
 
 [[package]]
 name = "pl-user-io"
-version = "0.0.10"
+version = "0.0.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "rich" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/eb/83/a6121ef1225e1500c7ac136608a0f1d5dc19d7b6b21a5d26d74ad9208f2b/pl_user_io-0.0.10.tar.gz", hash = "sha256:69c0668fd826aee2cdaa784609d4f1d1796822ef02f591f1f9941f687019b514", size = 9111, upload-time = "2026-02-24T21:43:04.469Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e7/cf/9f275d552b0eefce9568b10ca2e6b68cdb17669fff93ba060e9aabf1e662/pl_user_io-0.0.11.tar.gz", hash = "sha256:315e3029a3732ed791981ac9ad92a9b5ab1ff40fe4fad25a561babd3e2220d7b", size = 9096, upload-time = "2026-02-24T21:47:57.046Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ce/f0/f806217df19454be84f0618c9d7a7723fd8f1b003a584aa2b04895302aa9/pl_user_io-0.0.10-py3-none-any.whl", hash = "sha256:567fea35c94b74ff92323f66e194fc8cb67a1139a0a9ad14ee6600e4f86b6bb9", size = 14344, upload-time = "2026-02-24T21:43:03.295Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/79/6f1f12602953d328c2ed261c9c5e2b4f11a7469b94b9d80635ddf796b402/pl_user_io-0.0.11-py3-none-any.whl", hash = "sha256:1aa267fa094bdb5f80be448a2b03205c0f69a80133a8b421b6e04765155b6bcf", size = 14346, upload-time = "2026-02-24T21:47:57.704Z" },
 ]
 
 [[package]]
