@@ -1,0 +1,29 @@
+[project]
+name = "pl-mocks-and-fakes"
+version = "0.0.38"
+description = "Mock slow, nondeterministic, and side-effect-producing code with minimal per-test configuration."
+readme = "README.md"
+authors = [{ name = "Peter Lavigne" }]
+requires-python = ">=3.12"
+dependencies = ["pydantic"]
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+classifiers = ["License :: OSI Approved :: Apache Software License"]
+
+[project.urls]
+Homepage = "https://github.com/Peter-Lavigne/pl-mocks-and-fakes"
+Repository = "https://github.com/Peter-Lavigne/pl-mocks-and-fakes"
+
+[build-system]
+requires = ["uv_build>=0.10.4,<0.11.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = ["verploy>=0.0.2", "pyright>=1.1.409", "pytest>=9.0.2", "pytest-cov>=7.0.0", "ruff>=0.15.2"]
+
+
+[tool.pyright]
+typeCheckingMode = "strict"
+
+[tool.coverage.run]
+omit = ["tests/*"]
