@@ -1,4 +1,6 @@
-from tests.test_files.module_to_mock import function_to_mock
+from tests.test_files.module_to_mock import (
+    function_to_mock,
+)
 from tests.test_files.nested_test_files_1.function_that_calls_function_to_mock import (
     function_that_calls_function_to_mock,
 )

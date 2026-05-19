@@ -75,6 +75,10 @@ def mock_for(component: Callable[..., Any]) -> Mock:
     return _mocks[component]
 
 
+def unmock(component: Callable[..., Any]) -> None:
+    mock_for(component).side_effect = component.__wrapped__  # type: ignore[attr-defined]
+
+
 def stub[T](component: Callable[..., T]) -> Callable[[T], None]:
     def set_value(value: T) -> None:
         mock = mock_for(component)

@@ -7,6 +7,7 @@ from pl_mocks_and_fakes.mocks import (
     initialize_mocks,
     mock_for,
     stub,
+    unmock,
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "initialize_mocks",
     "mock_for",
     "stub",
+    "unmock",
 ]
