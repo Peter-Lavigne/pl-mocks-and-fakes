@@ -7,9 +7,8 @@ from types import NoneType
 from typing import Literal, NamedTuple, TypedDict, TypeVar
 
 import pytest
-from pydantic import BaseModel
-
 from pl_mocks_and_fakes.default_value import default_value
+from pydantic import BaseModel
 
 
 def test_returns_zero_for_int() -> None:

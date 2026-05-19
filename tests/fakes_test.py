@@ -1,4 +1,5 @@
 from pl_mocks_and_fakes.fakes import fake_for
+
 from tests.test_files.api_fake import ApiFake
 from tests.test_files.fakes_test_module import duplicate_item
 
