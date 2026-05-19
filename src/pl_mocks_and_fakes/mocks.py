@@ -76,6 +76,7 @@ def mock_for(component: Callable[..., Any]) -> Mock:
 
 
 def unmock(component: Callable[..., Any]) -> None:
+    # Useful when the function under test is itself decorated with @MockInUnitTests
     mock_for(component).side_effect = component.__wrapped__  # type: ignore[attr-defined]
 
 
